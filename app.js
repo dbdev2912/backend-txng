@@ -14,6 +14,7 @@ const { Account } = require('./module/account');
 const { Tables } = require('./module/tables');
 const { Table } = require('./module/table');
 const { Field } = require('./module/field');
+const { Model } = require('./module/model');
 /* middlewares */
 
 app.use(require('cookie-parser')(secret.cookie));
@@ -53,6 +54,14 @@ app.get('/api/:rel/fields', (req, res) => {
         const { fields, foreign_keys, keys } = result;
 
         res.send( { fields, foreign_keys, keys } );
+    })
+})
+
+app.get('/api/:rel/data', (req, res) => {
+    const { rel } = req.params;
+    const model = new Model( rel );
+    model.get( (data) => {
+        res.send({ data });
     })
 })
 
@@ -105,6 +114,16 @@ app.post('/api/models/delete/table', (req, res) => {
         res.send({ success: true })
     })
 })
+
+app.post('/api/:rel/add/data', (req, res) => {
+    const { rel }  = req.params;
+    const { data } = req.body;
+    const model = new Model( rel );
+    model.insertOne( data , (result) => {
+        res.send({ success: true })
+    });
+
+});
 
 app.use((req, res, next) => {
     res.send(404, { msg: "404 not found" });
