@@ -21,6 +21,14 @@ class Tables{
     save(){
         /* saving to db */
     }
+
+    remove( id, callback ){
+        connector( dbo => {
+            dbo.collection("relations").remove({ id: id }, (err, result) => {
+                callback(result);
+            })
+        } )
+    }
 }
 
 module.exports = {

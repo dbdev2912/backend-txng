@@ -46,10 +46,19 @@ app.get('/api/signout', (req, res) => {
     res.send({ success: true })
 })
 
+app.get('/api/:rel/fields', (req, res) => {
+    const { rel } = req.params;
+    const tb = new Table(rel);
+    tb.getFieldsByName( (result) => {
+        const { fields, foreign_keys, keys } = result;
+
+        res.send( { fields, foreign_keys, keys } );
+    })
+})
 
 app.get('/api/tables', (req, res) => {
     const tables = new Tables();
-    tables.getAll( ( list ) => {        
+    tables.getAll( ( list ) => {
         res.send({ tables: list  })
     })
 });
@@ -79,6 +88,23 @@ app.post('/api/models/new/table', (req, res) => {
     });
 })
 
+app.post('/api/models/modify/table', (req, res) => {
+    const { table } = req.body;
+    const tb = new Table( table.name, table.fields, table.keys, table.foreign_keys );
+    tb.setId( table.id );
+    tb.modify( (result) => {
+        res.send({ success: true })
+    });
+});
+
+app.post('/api/models/delete/table', (req, res) => {
+    const { id } = req.body;
+
+    const tables = new Tables();
+    tables.remove(id, (result) => {
+        res.send({ success: true })
+    })
+})
 
 app.use((req, res, next) => {
     res.send(404, { msg: "404 not found" });

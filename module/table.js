@@ -1,7 +1,7 @@
 const { connector } = require('../db/connector');
 
 class Table {
-    constructor( name, fields, keys, foreign_keys ){
+    constructor( name, fields = [], keys= [], foreign_keys=[] ){
         this.id = -1;
         this.name = name;
         this.fields = fields;
@@ -81,6 +81,28 @@ class Table {
                 }
             })
         })
+    }
+
+
+    modify(callback){
+        connector( (dbo) => {
+            dbo.collection("relations").updateOne({ "id": this.id }, { $set: { name: this.name, fields: this.fields, keys: this.keys, foreign_keys: this.foreign_keys } }, (err, result) => {
+                if(err){
+                    callback(500);
+                }else{
+                    callback(200);
+                }
+            })
+        })
+    }
+
+    getFieldsByName( callback ){
+        let name = this.name;
+        connector(( dbo ) => {
+            dbo.collection("relations").findOne({ "name": name }, (err, result) => {
+                callback(result);
+            })
+        });
     }
 }
 
