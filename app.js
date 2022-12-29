@@ -120,7 +120,7 @@ app.post('/api/:rel/add/data', (req, res) => {
     const { data } = req.body;
     const model = new Model( rel );
     model.insertOne( data , (result) => {
-        res.send({ success: true })
+        res.send({ success: result })
     });
 
 });

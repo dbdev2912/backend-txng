@@ -99,7 +99,7 @@ class Table {
     getFieldsByName( callback ){
         let name = this.name;
         connector(( dbo ) => {
-            dbo.collection("relations").findOne({ "name": name }, (err, result) => {
+            dbo.collection("relations").findOne({ "name": name }, (err, result) => {                
                 callback(result);
             })
         });
